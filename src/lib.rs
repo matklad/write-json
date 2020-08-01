@@ -101,11 +101,14 @@ impl<'a> Array<'a> {
         buf.push('[');
         Array { buf, first: true }
     }
-    fn element<T, F: FnOnce(&mut String, T)>(&mut self, enc: F, value: T) -> &mut Self {
+    fn comma(&mut self) {
         if !self.first {
             self.buf.push(',');
         }
         self.first = false;
+    }
+    fn element<T, F: FnOnce(&mut String, T)>(&mut self, enc: F, value: T) -> &mut Self {
+        self.comma();
         enc(&mut self.buf, value);
         self
     }
@@ -123,9 +126,11 @@ impl<'a> Array<'a> {
         self.element(encode_str, value)
     }
     pub fn object(&mut self) -> Object<'_> {
+        self.comma();
         Object::new(self.buf)
     }
     pub fn array(&mut self) -> Array<'_> {
+        self.comma();
         Array::new(self.buf)
     }
 }
