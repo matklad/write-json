@@ -1,0 +1,11 @@
+[package]
+name = "write-json"
+description = "Simple {dependency,trait,macro}-less JSON serialization"
+version = "0.1.0"
+repository = "https://github.com/matklad/write-json"
+authors = ["Aleksey Kladov <aleksey.kladov@gmail.com>"]
+license = "MIT OR Apache-2.0"
+edition = "2018"
+
+keywords = ["json", "serialization"]
+categories = ["encoding"]
