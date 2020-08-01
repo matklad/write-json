@@ -29,7 +29,8 @@ fn string_escaping() {
             .string("hello world")
             .string(" \r\n\t\\ \\r\\n\\t")
             .string("❤😂")
-            .string("\x00\x07\x1F\x20\x7E\x7F\u{80}\u{9f}!");
+            .string("\x00\x07\x1F\x20\x7E\x7F\u{80}\u{9f}!")
+            .string("\x7F!");
     }
     let strings = buf.replace(|c: char| "[],".contains(c), "\n");
     let expected = r#"
@@ -41,6 +42,7 @@ fn string_escaping() {
 " \r\n\t\\ \\r\\n\\t"
 "❤\u0020"
 "\u0000\u0070\u00F1 ~\u00F7\u0008\u00F9!"
+"\u00F7!"
 "#;
 
     assert_eq!(strings, expected);

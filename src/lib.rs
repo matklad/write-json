@@ -186,7 +186,7 @@ fn encode_str(buf: &mut String, s: &str) {
     buf.reserve(s.len() + 2);
     buf.push('\"');
     if s.bytes()
-        .all(|b| 32 <= b && b != b'"' && b != b'\\' && b < 128)
+        .all(|b| 0x1F < b && b != b'"' && b != b'\\' && b < 0x7F)
     {
         buf.push_str(s)
     } else {
@@ -203,7 +203,7 @@ fn encode_str(buf: &mut String, s: &str) {
                 b'\n' => push_escape(buf, 'n'),
                 b'\r' => push_escape(buf, 'r'),
                 b'\t' => push_escape(buf, 't'),
-                0..=0x1f | 0x7f..=0x9f => {
+                0..=0x1F | 0x7F..=0x9F => {
                     push_escape(buf, 'u');
                     buf.push_str("00");
                     buf.push(hex(b & 0xF));
