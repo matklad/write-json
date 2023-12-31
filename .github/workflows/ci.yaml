@@ -2,10 +2,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches:
-    - master
-    - staging
-    - trying
+    branches: ["master"]
 
 env:
   CARGO_INCREMENTAL: 0
@@ -16,23 +13,15 @@ env:
   RUSTUP_MAX_RETRIES: 10
 
 jobs:
-  rust:
+  test:
     name: Rust
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+    - uses: actions/checkout@v4
       with:
-        toolchain: stable
-        profile: minimal
-        override: true
-
-    - name: Compile
-      run: cargo test --workspace --no-run
-
-    - name: Test
-      run: cargo test --workspace
+        fetch-depth: 0 # fetch tags for publish
+    - uses: Swatinem/rust-cache@3cf7f8cc28d1b4e7d01e3783be10a97d55d483c8 # v2.7.1
+    - run: cargo run --package xtask
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
