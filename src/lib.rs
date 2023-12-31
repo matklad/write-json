@@ -197,19 +197,23 @@ fn encode_str(buf: &mut String, s: &str) {
     #[inline(never)]
     fn slow_path(buf: &mut String, s: &str) {
         for c in s.chars() {
-            let b = c as u8;
-            match b {
-                b'\\' | b'"' => push_escape(buf, c),
-                b'\n' => push_escape(buf, 'n'),
-                b'\r' => push_escape(buf, 'r'),
-                b'\t' => push_escape(buf, 't'),
-                0..=0x1F | 0x7F..=0x9F => {
-                    push_escape(buf, 'u');
-                    buf.push_str("00");
-                    buf.push(hex(b & 0xF));
-                    buf.push(hex(b >> 4));
+            if (c as u32) < 256 {
+                let b = c as u8;
+                match b {
+                    b'\\' | b'"' => push_escape(buf, c),
+                    b'\n' => push_escape(buf, 'n'),
+                    b'\r' => push_escape(buf, 'r'),
+                    b'\t' => push_escape(buf, 't'),
+                    0..=0x1F | 0x7F..=0x9F => {
+                        push_escape(buf, 'u');
+                        buf.push_str("00");
+                        buf.push(hex(b >> 4));
+                        buf.push(hex(b & 0xF));
+                    }
+                    _ => buf.push(c),
                 }
-                _ => buf.push(c),
+            } else {
+                buf.push(c)
             }
         }
     }
